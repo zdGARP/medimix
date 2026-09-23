@@ -1,4 +1,5 @@
 import type { ExtractedEvidence } from '../types';
+import { runLocalOcrFallback } from './localOcrService';
 
 export interface AnalysisResponse {
   success: boolean;
@@ -31,21 +32,34 @@ export async function analyzeMedicineImages(images: string[]): Promise<AnalysisR
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
       console.warn('[GeminiService] API Error:', response.status, errorData);
-      return {
-        success: false,
-        error: errorData.error || 'SERVICE_UNAVAILABLE',
-        message: errorData.message || 'Analysis service unavailable.'
-      };
+      
+      console.log('[GeminiService] Triggering local Tesseract.js fallback due to API failure...');
+      try {
+        const fallbackEvidence = await runLocalOcrFallback(images[0]);
+        return { success: true, evidence: fallbackEvidence };
+      } catch (fallbackErr) {
+        return {
+          success: false,
+          error: errorData.error || 'SERVICE_UNAVAILABLE',
+          message: errorData.message || 'Analysis service unavailable.'
+        };
+      }
     }
 
     const data: AnalysisResponse = await response.json();
     return data;
   } catch (err: any) {
     console.error('[GeminiService] Analysis request exception:', err);
-    return {
-      success: false,
-      error: 'NETWORK_ERROR',
-      message: 'Could not connect to the evidence extraction engine.'
-    };
+    console.log('[GeminiService] Triggering local Tesseract.js fallback due to Network exception...');
+    try {
+      const fallbackEvidence = await runLocalOcrFallback(images[0]);
+      return { success: true, evidence: fallbackEvidence };
+    } catch (fallbackErr) {
+      return {
+        success: false,
+        error: 'NETWORK_ERROR',
+        message: 'Could not connect to the evidence extraction engine.'
+      };
+    }
   }
 }

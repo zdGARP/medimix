@@ -256,18 +256,19 @@ export async function searchMedicinesByEvidence(
   }
 
   if (allCandidates.length === 0) {
-
-
-    return {
-      hasReliableEvidence: false,
-      medicineResult: null,
-      recoveredEvidence: [],
-      candidateMatches: [],
-      fingerprint,
-      confidenceLevel: 'LOW',
-      confidenceScore: 0,
-      expiryStatus: 'CANNOT_VERIFY'
-    };
+    // Check if we at least have an AI fallback profile before giving up completely
+    if (!evidence.synthesizedProfile || !evidence.synthesizedProfile.name) {
+      return {
+        hasReliableEvidence: false,
+        medicineResult: null,
+        recoveredEvidence: [],
+        candidateMatches: [],
+        fingerprint,
+        confidenceLevel: 'LOW',
+        confidenceScore: 0,
+        expiryStatus: 'CANNOT_VERIFY'
+      };
+    }
   }
 
   // 4. Score each candidate against extracted evidence

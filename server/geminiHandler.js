@@ -80,6 +80,7 @@ CRITICAL INSTRUCTIONS:
 6. If batch number, manufacturing date, or expiry date are visible, extract them. If unreadable, missing, or torn, set to null.
 7. Assess image quality metrics (blur, glare, darkness, cropping, occlusion, perspective, readability) as "LOW", "MEDIUM", or "HIGH".
 8. Assess overall evidence quality as "LOW", "MEDIUM", or "HIGH". If no readable text or medicine packaging clues are found, set overallEvidenceQuality to "LOW".
+9. SYNTHETIC PROFILE FALLBACK: If you can confidently identify the medicine from the packaging, construct a "synthesizedProfile" object containing the generic or brand name, strength, dosage form, manufacturer, and a brief description of its clinical uses/instructions. If you cannot identify the medicine, set "synthesizedProfile" to null.
 
 Return ONLY a JSON object matching this exact structure:
 {
@@ -104,7 +105,14 @@ Return ONLY a JSON object matching this exact structure:
     "perspective": "LOW",
     "readability": "LOW"
   },
-  "overallEvidenceQuality": "LOW"
+  "overallEvidenceQuality": "LOW",
+  "synthesizedProfile": {
+    "name": "string",
+    "strength": "string",
+    "dosageForm": "string",
+    "manufacturer": "string",
+    "instructions": "string"
+  } // or null
 }
 `;
 
@@ -201,7 +209,14 @@ Return ONLY a JSON object matching this exact structure:
           perspective: ['LOW', 'MEDIUM', 'HIGH'].includes(parsedEvidence.imageQuality?.perspective) ? parsedEvidence.imageQuality.perspective : 'LOW',
           readability: ['LOW', 'MEDIUM', 'HIGH'].includes(parsedEvidence.imageQuality?.readability) ? parsedEvidence.imageQuality.readability : 'MEDIUM'
         },
-        overallEvidenceQuality: ['LOW', 'MEDIUM', 'HIGH'].includes(parsedEvidence.overallEvidenceQuality) ? parsedEvidence.overallEvidenceQuality : 'LOW'
+        overallEvidenceQuality: ['LOW', 'MEDIUM', 'HIGH'].includes(parsedEvidence.overallEvidenceQuality) ? parsedEvidence.overallEvidenceQuality : 'LOW',
+        synthesizedProfile: parsedEvidence.synthesizedProfile && typeof parsedEvidence.synthesizedProfile === 'object' ? {
+          name: parsedEvidence.synthesizedProfile.name || 'Unknown Medicine',
+          strength: parsedEvidence.synthesizedProfile.strength || '',
+          dosageForm: parsedEvidence.synthesizedProfile.dosageForm || 'Tablet',
+          manufacturer: parsedEvidence.synthesizedProfile.manufacturer || 'Unknown',
+          instructions: parsedEvidence.synthesizedProfile.instructions || 'Consult a healthcare professional for usage.'
+        } : null
       };
 
       console.log('✅ [GeminiServer] Structured evidence extracted successfully:', normalizedEvidence);

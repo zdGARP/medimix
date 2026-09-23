@@ -256,6 +256,66 @@ export async function searchMedicinesByEvidence(
   }
 
   if (allCandidates.length === 0) {
+    if (evidence.synthesizedProfile && evidence.synthesizedProfile.name) {
+      // Dynamic AI Fallback (Not in database, but AI identified it)
+      const synth = evidence.synthesizedProfile;
+      const synthesizedId = `synth_${Date.now()}`;
+      
+      const synthMedicine: MedicineItem = {
+        id: synthesizedId,
+        name: synth.name,
+        strength: synth.strength || 'Unknown',
+        manufacturer: synth.manufacturer || 'Unknown',
+        batchNumber: evidence.batchNumber || 'Unknown',
+        mfgDate: evidence.manufacturingDate || 'Unknown',
+        expiryDate: evidence.expiryDate || 'Unknown',
+        isExpired: false, // Cannot verify
+        dosageForm: synth.dosageForm || 'Tablet',
+        instructions: synth.instructions || 'Always consult a physician before using this medication.',
+        confidenceLevel: 'LOW', // LOW confidence because it's purely AI hallucinated / not DB verified
+        confidenceScore: 65,
+        matchReasons: ['AI Visual Identification (Not found in catalog)'],
+        recoveredEvidence: [
+          { id: 'synth_1', type: 'text', label: 'AI Synthesis', value: synth.name, confidence: 90, status: 'matched' }
+        ],
+        imageSrc: capturedPhotoUrl,
+        audioTextEn: `Identified visually as ${synth.name} ${synth.strength}. This medicine is not in our verified clinical catalog. Please verify with a pharmacist. ${synth.instructions}`,
+        audioTextTa: '',
+        savedAt: new Date().toISOString(),
+        verificationStatus: 'pending_verification'
+      };
+
+      const synthMatch: CandidateMatch = {
+        candidate: {
+          id: synthesizedId,
+          generic_name: synth.name,
+          brand_name: null,
+          strength: synth.strength,
+          dosage_form: synth.dosageForm,
+          manufacturer: synth.manufacturer,
+          aliases: [],
+          normalized_name: synth.name.toLowerCase(),
+          normalized_manufacturer: synth.manufacturer.toLowerCase(),
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        },
+        score: 65,
+        matchReasons: ['Dynamically synthesized from image evidence'],
+        matchedEvidence: synthMedicine.recoveredEvidence
+      };
+
+      return {
+        hasReliableEvidence: true,
+        medicineResult: synthMedicine,
+        recoveredEvidence: synthMedicine.recoveredEvidence,
+        candidateMatches: [synthMatch],
+        fingerprint,
+        confidenceLevel: 'LOW',
+        confidenceScore: 65,
+        expiryStatus: 'CANNOT_VERIFY'
+      };
+    }
+
     return {
       hasReliableEvidence: false,
       medicineResult: null,

@@ -132,6 +132,13 @@ export interface ExtractedEvidence {
     readability: 'LOW' | 'MEDIUM' | 'HIGH';
   };
   overallEvidenceQuality: 'LOW' | 'MEDIUM' | 'HIGH';
+  synthesizedProfile?: {
+    name: string;
+    strength: string;
+    dosageForm: string;
+    manufacturer: string;
+    instructions: string;
+  };
 }
 
 export interface MedicineFingerprint {

@@ -35,9 +35,6 @@ export const ScanAnalysisView: React.FC = () => {
     { title: isTa ? 'பொட்டலம் பகுப்பாய்வு செய்யப்பட்டது' : 'Packaging analyzed', detail: 'Blister geometry & shape matched' },
     { title: isTa ? 'மருந்து விரல்ரேகை உருவாக்கப்படுகிறது' : 'Building medicine fingerprint', detail: 'Aggregating multi-source evidence' },
     { title: isTa ? 'சாத்தியமான மருந்துகள் ஒப்பிடப்படுகின்றன' : 'Matching Supabase medicine database', detail: 'Querying clinical catalog' },
-    { title: isTa ? 'நம்பிக்கை நிலை சரிபார்க்கப்படுகிறது' : 'Checking confidence rating', detail: 'Safety threshold calculation' }
-  ];
-
   const hasTriggeredRef = React.useRef(false);
 
   // Trigger real pipeline on mount if real photo was used
@@ -45,23 +42,39 @@ export const ScanAnalysisView: React.FC = () => {
     if (isRealAnalysis && !hasTriggeredRef.current) {
       hasTriggeredRef.current = true;
       runRealMedicineAnalysis();
-    }
-  }, [isRealAnalysis]);
-
-  // Step animation loop
-  useEffect(() => {
-    if (realAnalysisLoading) {
+    } else if (!isRealAnalysis && !hasTriggeredRef.current) {
+      // Simulate loading delay for demo mode
+      hasTriggeredRef.current = true;
+      setCompletedSteps(0);
       const timer = setInterval(() => {
         setCompletedSteps(prev => {
-          if (prev < stages.length - 1) return prev + 1;
+          if (prev < stages.length) {
+            return prev + 1;
+          }
+          clearInterval(timer);
           return prev;
         });
       }, 500);
       return () => clearInterval(timer);
-    } else {
-      setCompletedSteps(stages.length);
     }
-  }, [realAnalysisLoading, stages.length]);
+  }, [isRealAnalysis]);
+
+  // Step animation loop for real analysis
+  useEffect(() => {
+    if (isRealAnalysis) {
+      if (realAnalysisLoading) {
+        const timer = setInterval(() => {
+          setCompletedSteps(prev => {
+            if (prev < stages.length - 1) return prev + 1;
+            return prev;
+          });
+        }, 500);
+        return () => clearInterval(timer);
+      } else {
+        setCompletedSteps(stages.length);
+      }
+    }
+  }, [realAnalysisLoading, stages.length, isRealAnalysis]);
 
   const handleProceed = () => {
     if (!isRealAnalysis && demoState === 'damaged_rescue') {

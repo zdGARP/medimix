@@ -126,8 +126,14 @@ Return ONLY a JSON object matching this exact structure:
     }
   }
 
-  // Call Gemini REST API (gemini-2.5-flash with fallback to gemini-1.5-flash)
-  const modelsToTry = ['gemini-2.5-flash', 'gemini-1.5-flash'];
+  // Call Gemini REST API with comprehensive fallbacks for different API key capabilities
+  const modelsToTry = [
+    'gemini-1.5-flash-latest', 
+    'gemini-1.5-flash', 
+    'gemini-2.5-flash', 
+    'gemini-1.0-pro-vision-latest',
+    'gemini-pro-vision'
+  ];
   let lastError = null;
 
   for (const model of modelsToTry) {

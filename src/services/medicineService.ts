@@ -272,7 +272,7 @@ export async function searchMedicinesByEvidence(
         isExpired: false, // Cannot verify
         dosageForm: synth.dosageForm || 'Tablet',
         instructions: synth.instructions || 'Always consult a physician before using this medication.',
-        confidenceLevel: 'LOW', // LOW confidence because it's purely AI hallucinated / not DB verified
+        confidenceLevel: 'MEDIUM', // MEDIUM confidence because it's not DB verified, but we still want to display it
         confidenceScore: 65,
         matchReasons: ['AI Visual Identification (Not found in catalog)'],
         recoveredEvidence: [
@@ -310,7 +310,7 @@ export async function searchMedicinesByEvidence(
         recoveredEvidence: synthMedicine.recoveredEvidence,
         candidateMatches: [synthMatch],
         fingerprint,
-        confidenceLevel: 'LOW',
+        confidenceLevel: 'MEDIUM',
         confidenceScore: 65,
         expiryStatus: 'CANNOT_VERIFY'
       };

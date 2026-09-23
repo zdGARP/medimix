@@ -8,6 +8,7 @@ interface VoiceButtonProps {
   size?: 'sm' | 'md' | 'lg';
   variant?: 'primary' | 'secondary' | 'outline';
   langOverride?: 'en' | 'ta';
+  autoPlay?: boolean;
 }
 
 export const VoiceButton: React.FC<VoiceButtonProps> = ({
@@ -15,12 +16,23 @@ export const VoiceButton: React.FC<VoiceButtonProps> = ({
   label = 'Listen',
   size = 'md',
   variant = 'primary',
-  langOverride
+  langOverride,
+  autoPlay = false
 }) => {
   const { isSpeaking, activeSpokenText, speakText, stopSpeaking, accessibility } = useApp();
   const isTa = (langOverride || accessibility.language) === 'ta';
 
   const isCurrentActive = isSpeaking && activeSpokenText === textToSpeak;
+
+  React.useEffect(() => {
+    if (autoPlay && textToSpeak && !isSpeaking) {
+      // Small delay to ensure smooth transition
+      const timer = setTimeout(() => {
+        speakText(textToSpeak, langOverride);
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [autoPlay, textToSpeak]);
 
   const handleClick = () => {
     if (isCurrentActive) {

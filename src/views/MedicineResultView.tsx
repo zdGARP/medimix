@@ -158,6 +158,7 @@ export const MedicineResultView: React.FC = () => {
             label={isTa ? '🔊 தகவலைக் கேள்' : '🔊 Listen to this information'}
             size="lg"
             variant="primary"
+            autoPlay={accessibility.autoReadResults}
           />
 
           <span className="text-xs text-slate-500 font-medium hidden sm:block">

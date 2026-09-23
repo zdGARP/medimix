@@ -1,0 +1,160 @@
+@import "tailwindcss";
+
+:root {
+  --bg-primary: #FAF9F7;
+  --bg-secondary: #F6F7F5;
+  --bg-card: #FFFFFF;
+  --border-color: #E9E8E5;
+  --text-main: #334155;
+  --text-secondary: #475569;
+  --text-body: #64748B;
+  --text-muted: #94A3B8;
+  --text-teal: #2F9188;
+  
+  --teal-primary: #2FA89B;
+  --teal-dark: #287F78;
+  --teal-light: #DDF3EF;
+  --teal-very-light: #EFF9F7;
+
+  --pastel-mint: #E6F4EF;
+  --pastel-pink: #F7EDEF;
+  --pastel-lavender: #F1EFF7;
+  --pastel-peach: #F8EFE7;
+  --pastel-amber: #FFF4DD;
+}
+
+body {
+  background-color: #FAF9F7;
+  color: #334155;
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Accessibility High Contrast Overrides (GENUINE HIGH CONTRAST ACCESSIBILITY PALETTE - MUST REMAIN BLACK & YELLOW) */
+html.high-contrast body {
+  background-color: #000000 !important;
+  color: #FFFF00 !important;
+}
+
+html.high-contrast .bg-white,
+html.high-contrast .bg-slate-900,
+html.high-contrast .bg-slate-800,
+html.high-contrast .bg-slate-950,
+html.high-contrast .bg-slate-50,
+html.high-contrast .bg-slate-100,
+html.high-contrast .bg-slate-200,
+html.high-contrast [class*="bg-"] {
+  background-color: #000000 !important;
+  color: #FFFF00 !important;
+  border: 2px solid #FFFF00 !important;
+}
+
+html.high-contrast h1,
+html.high-contrast h2,
+html.high-contrast h3,
+html.high-contrast p,
+html.high-contrast span,
+html.high-contrast div {
+  color: #FFFF00 !important;
+}
+
+html.high-contrast button,
+html.high-contrast a {
+  border: 2px solid #FFFF00 !important;
+  color: #FFFFFF !important;
+  background-color: #000000 !important;
+}
+
+html.high-contrast button:hover,
+html.high-contrast button:focus {
+  background-color: #FFFF00 !important;
+  color: #000000 !important;
+}
+
+/* Accessibility Large Text Overrides */
+html.large-text {
+  font-size: 19px !important;
+}
+
+html.large-text h1 {
+  font-size: 2.25rem !important;
+}
+
+html.large-text h2 {
+  font-size: 1.85rem !important;
+}
+
+html.large-text button {
+  padding-top: 1rem !important;
+  padding-bottom: 1rem !important;
+  font-size: 1.15rem !important;
+}
+
+/* Custom Keyframe Animations (Subtle Light Theme Treatments) */
+@keyframes laser-scan {
+  0% { top: 0%; opacity: 0.8; }
+  50% { opacity: 1; }
+  100% { top: 96%; opacity: 0.8; }
+}
+
+@keyframes pulse-ring {
+  0% { transform: scale(0.96); opacity: 0.8; }
+  50% { transform: scale(1.05); opacity: 0.3; }
+  100% { transform: scale(0.96); opacity: 0.8; }
+}
+
+@keyframes voice-wave {
+  0%, 100% { height: 8px; }
+  50% { height: 32px; }
+}
+
+@keyframes fingerprint-scan {
+  0% { opacity: 0.4; transform: scale(0.98); }
+  50% { opacity: 1; transform: scale(1.02); }
+  100% { opacity: 0.4; transform: scale(0.98); }
+}
+
+.animate-laser-scan {
+  animation: laser-scan 2.5s ease-in-out infinite alternate;
+}
+
+.animate-pulse-ring {
+  animation: pulse-ring 2s infinite;
+}
+
+.animate-voice-wave-1 { animation: voice-wave 0.8s ease-in-out infinite; }
+.animate-voice-wave-2 { animation: voice-wave 0.8s ease-in-out infinite 0.2s; }
+.animate-voice-wave-3 { animation: voice-wave 0.8s ease-in-out infinite 0.4s; }
+
+.animate-fingerprint {
+  animation: fingerprint-scan 3s ease-in-out infinite;
+}
+
+/* Focus outline for accessibility */
+*:focus-visible {
+  outline: 3px solid #2FA89B !important;
+  outline-offset: 3px !important;
+}
+
+/* Bounding box for MedMatch rescue evidence (Subtle Teal Outline + Translucent Teal Fill) */
+.rescue-bounding-box {
+  border: 2px solid #2FA89B;
+  background-color: rgba(47, 168, 155, 0.15);
+  transition: all 0.3s ease;
+}
+
+.rescue-bounding-box:hover {
+  border: 2px solid #287F78;
+  background-color: rgba(47, 168, 155, 0.28);
+  box-shadow: 0 0 10px rgba(47, 168, 155, 0.25);
+}
+
+/* Custom scrollbar for demo state bar & menus */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

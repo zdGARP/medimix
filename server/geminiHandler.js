@@ -134,8 +134,8 @@ Return ONLY a JSON object matching this exact structure:
     }
   }
 
-  // Call Gemini REST API with comprehensive fallbacks for different API key capabilities
   const modelsToTry = [
+    'gemini-3.6-flash',
     'gemini-1.5-flash-8b',
     'gemini-2.5-flash', 
     'gemini-1.5-flash-latest', 

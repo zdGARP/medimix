@@ -104,7 +104,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [biometricSuccessCallback, setBiometricSuccessCallback] = useState<(() => void) | null>(null);
 
   // Demo state data
-  const [activeMedicineResult, setActiveMedicineResult] = useState<MedicineItem | null>(MOCK_HIGH_CONFIDENCE_MEDICINE);
+  const [activeMedicineResult, setActiveMedicineResult] = useState<MedicineItem | null>(null);
   const [recoveredEvidence, setRecoveredEvidence] = useState<EvidenceFragment[]>(MOCK_HIGH_CONFIDENCE_MEDICINE.recoveredEvidence);
   const [candidateMatches, setCandidateMatches] = useState<CandidateMatch[]>(MOCK_CANDIDATE_MATCHES);
 

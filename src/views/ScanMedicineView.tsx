@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import { 
   Camera, 
@@ -17,6 +17,34 @@ export const ScanMedicineView: React.FC = () => {
 
   const [activeAngle, setActiveAngle] = useState<'Front' | 'Back' | 'Close-up' | 'Expiry'>('Front');
   const [capturedAngles, setCapturedAngles] = useState<string[]>(['Front']);
+  const [cameraError, setCameraError] = useState<string | null>(null);
+  
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    let stream: MediaStream | null = null;
+    const initCamera = async () => {
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: 'environment' },
+          audio: false
+        });
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+        }
+      } catch (err: any) {
+        setCameraError(err.message || 'Camera permission denied or unavailable.');
+      }
+    };
+    initCamera();
+    return () => {
+      if (stream) {
+        stream.getTracks().forEach(t => t.stop());
+      }
+    };
+  }, []);
 
   const guideTextEn = "Place your medicine strip inside the frame. We will guide you. Hold the camera steady and make sure the lighting is bright.";
   const guideTextTa = "மருந்து அட்டையை நடு சதுரப் பெட்டிக்குள் வைக்கவும். வெளிச்சம் நன்றாக இருக்கிறதா என்று பார்த்து, கேமராவை அசையாமல் பிடித்து ஸ்கேன் பொத்தானை அழுத்தவும்.";
@@ -29,9 +57,41 @@ export const ScanMedicineView: React.FC = () => {
   ];
 
   const handleCapture = () => {
+    if (videoRef.current && canvasRef.current && !cameraError) {
+      const video = videoRef.current;
+      const canvas = canvasRef.current;
+      if (video.videoWidth > 0 && video.videoHeight > 0) {
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+          ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+          const dataUrl = canvas.toDataURL('image/jpeg', 0.9);
+          addCapturedPhoto(dataUrl);
+          setCurrentRoute('analysis');
+          return;
+        }
+      }
+    }
+    
+    // Fallback if camera not working
     const currentPhoto = sampleMockPhotos.find(p => p.title === activeAngle)?.src || sampleMockPhotos[0].src;
     addCapturedPhoto(currentPhoto);
     setCurrentRoute('analysis');
+  };
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        if (event.target?.result) {
+          addCapturedPhoto(event.target.result as string);
+          setCurrentRoute('analysis');
+        }
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleAddAngle = (angle: 'Front' | 'Back' | 'Close-up' | 'Expiry') => {
@@ -91,12 +151,23 @@ export const ScanMedicineView: React.FC = () => {
           {/* Camera Preview Box with Soft Mint Background & White Brackets */}
           <div className="relative bg-[#E6F4EF] border border-[#C6EADF] rounded-[20px] overflow-hidden min-h-[360px] sm:min-h-[420px] flex flex-col items-center justify-center p-4">
             
-            {/* Background Sample Image with Soft Tint */}
-            <img 
-              src={sampleMockPhotos.find(p => p.title === activeAngle)?.src} 
-              alt="Medicine Strip Scan Target" 
-              className="absolute inset-0 w-full h-full object-cover opacity-75 filter contrast-105"
-            />
+            {/* Real Camera Feed */}
+            {cameraError ? (
+              <img 
+                src={sampleMockPhotos.find(p => p.title === activeAngle)?.src} 
+                alt="Medicine Strip Scan Target" 
+                className="absolute inset-0 w-full h-full object-cover opacity-75 filter contrast-105"
+              />
+            ) : (
+              <video 
+                ref={videoRef}
+                autoPlay 
+                playsInline 
+                muted
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+            )}
+            <canvas ref={canvasRef} className="hidden" />
             <div className="absolute inset-0 bg-[#E6F4EF]/30 backdrop-blur-[0.5px]"></div>
 
             {/* Laser Scan Animation Line */}
@@ -148,8 +219,15 @@ export const ScanMedicineView: React.FC = () => {
               <span>Capture photo</span>
             </button>
 
+            <input 
+              type="file" 
+              accept="image/*" 
+              className="hidden" 
+              ref={fileInputRef} 
+              onChange={handleFileUpload} 
+            />
             <button
-              onClick={handleCapture}
+              onClick={() => fileInputRef.current?.click()}
               className="py-3.5 px-6 rounded-[14px] bg-white hover:bg-slate-50 text-slate-700 border border-[#E9E8E5] font-bold text-base flex items-center justify-center gap-2 transition-colors shadow-xs"
             >
               <Upload className="w-4 h-4 text-[#2FA89B]" />

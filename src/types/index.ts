@@ -70,6 +70,7 @@ export interface MedicineItem {
   imageSrc: string;
   audioTextEn: string;
   audioTextTa: string;
+  audioText?: string;
   savedAt: string;
   verificationStatus: 'verified_by_user' | 'pending_verification' | 'pharmacist_reviewed';
 }

@@ -110,7 +110,7 @@ export const MedicineResultView: React.FC = () => {
     }, 800);
   };
 
-  const audioText = isTa ? med.audioTextTa : med.audioTextEn;
+  const audioText = med.audioText || (isTa ? med.audioTextTa : med.audioTextEn);
 
   return (
     <div className="max-w-4xl mx-auto space-y-6 pb-16">

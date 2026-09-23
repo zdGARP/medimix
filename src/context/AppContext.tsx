@@ -244,10 +244,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         const translatedReasons = await Promise.all(
           pipelineResult.medicineResult.matchReasons.map(r => translateDynamicText(r, selectedLanguage.code))
         );
+        
+        let translatedAudio = pipelineResult.medicineResult.audioTextEn;
+        if (selectedLanguage.code !== 'en') {
+          translatedAudio = await translateDynamicText(pipelineResult.medicineResult.audioTextEn, selectedLanguage.code);
+        }
 
         const translatedResult: any = {
           ...pipelineResult.medicineResult,
-          matchReasons: translatedReasons
+          matchReasons: translatedReasons,
+          audioText: translatedAudio
         };
         setActiveMedicineResult(translatedResult);
       } else {

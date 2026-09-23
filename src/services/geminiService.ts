@@ -80,6 +80,5 @@ export async function analyzeMedicineImages(images: string[]): Promise<AnalysisR
         synthesizedProfile: null
       }
     };
-    };
   }
 }

@@ -35,6 +35,9 @@ export const ScanAnalysisView: React.FC = () => {
     { title: isTa ? 'பொட்டலம் பகுப்பாய்வு செய்யப்பட்டது' : 'Packaging analyzed', detail: 'Blister geometry & shape matched' },
     { title: isTa ? 'மருந்து விரல்ரேகை உருவாக்கப்படுகிறது' : 'Building medicine fingerprint', detail: 'Aggregating multi-source evidence' },
     { title: isTa ? 'சாத்தியமான மருந்துகள் ஒப்பிடப்படுகின்றன' : 'Matching Supabase medicine database', detail: 'Querying clinical catalog' },
+    { title: isTa ? 'நம்பிக்கை நிலை சரிபார்க்கப்படுகிறது' : 'Checking confidence rating', detail: 'Safety threshold calculation' }
+  ];
+
   const hasTriggeredRef = React.useRef(false);
 
   // Trigger real pipeline on mount if real photo was used

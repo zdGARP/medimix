@@ -38,12 +38,15 @@ export const ScanAnalysisView: React.FC = () => {
     { title: isTa ? 'நம்பிக்கை நிலை சரிபார்க்கப்படுகிறது' : 'Checking confidence rating', detail: 'Safety threshold calculation' }
   ];
 
+  const hasTriggeredRef = React.useRef(false);
+
   // Trigger real pipeline on mount if real photo was used
   useEffect(() => {
-    if (isRealAnalysis) {
+    if (isRealAnalysis && !hasTriggeredRef.current) {
+      hasTriggeredRef.current = true;
       runRealMedicineAnalysis();
     }
-  }, []);
+  }, [isRealAnalysis]);
 
   // Step animation loop
   useEffect(() => {

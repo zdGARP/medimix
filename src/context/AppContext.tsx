@@ -177,6 +177,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
    * Run Real Pipeline: Calls Gemini API via secure server endpoint + runs Supabase Candidate Search
    */
   const runRealMedicineAnalysis = async () => {
+    console.log('[MEDIREAD] runRealMedicineAnalysis started. capturedPhotos.length:', capturedPhotos.length);
     setIsRealAnalysis(true);
     setRealAnalysisLoading(true);
     setRealAnalysisError(null);

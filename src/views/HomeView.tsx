@@ -23,7 +23,7 @@ import {
 import { VoiceButton } from '../components/ui/VoiceButton';
 
 export const HomeView: React.FC = () => {
-  const { setCurrentRoute, savedMedicines, addCapturedPhoto } = useApp();
+  const { setCurrentRoute, savedMedicines, addCapturedPhoto, setIsRealAnalysis } = useApp();
   const { selectedLanguage } = useLanguage();
   const lang = selectedLanguage.code;
 
@@ -197,9 +197,9 @@ export const HomeView: React.FC = () => {
     e.target.value = ''; // Reset input
   };
 
-  // Continue to Scan Analysis
   const handleProceedToAnalysis = () => {
     stopCamera();
+    setIsRealAnalysis(true);
     setCurrentRoute('analysis');
   };
 

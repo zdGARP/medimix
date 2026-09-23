@@ -57,6 +57,7 @@ export const ScanMedicineView: React.FC = () => {
   ];
 
   const handleCapture = () => {
+    console.log('[MEDIREAD] Capture button clicked.');
     if (videoRef.current && canvasRef.current && !cameraError) {
       const video = videoRef.current;
       const canvas = canvasRef.current;
@@ -83,6 +84,7 @@ export const ScanMedicineView: React.FC = () => {
   };
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log('[MEDIREAD] File upload triggered.');
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();

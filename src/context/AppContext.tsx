@@ -51,6 +51,7 @@ interface AppContextType {
 
   // Real vs Demo Pipeline State
   isRealAnalysis: boolean;
+  setIsRealAnalysis: (val: boolean) => void;
   realAnalysisLoading: boolean;
   realAnalysisError: string | null;
   lastExtractedEvidence: ExtractedEvidence | null;
@@ -426,6 +427,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       addSavedMedicine,
       deleteSavedMedicine,
       isRealAnalysis,
+      setIsRealAnalysis,
       realAnalysisLoading,
       realAnalysisError,
       lastExtractedEvidence,

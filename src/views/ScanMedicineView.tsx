@@ -12,7 +12,7 @@ import {
 import { VoiceButton } from '../components/ui/VoiceButton';
 
 export const ScanMedicineView: React.FC = () => {
-  const { setCurrentRoute, accessibility, addCapturedPhoto } = useApp();
+  const { setCurrentRoute, accessibility, addCapturedPhoto, setIsRealAnalysis } = useApp();
   const isTa = accessibility.language === 'ta';
 
   const [activeAngle, setActiveAngle] = useState<'Front' | 'Back' | 'Close-up' | 'Expiry'>('Front');
@@ -68,6 +68,7 @@ export const ScanMedicineView: React.FC = () => {
           ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
           const dataUrl = canvas.toDataURL('image/jpeg', 0.9);
           addCapturedPhoto(dataUrl);
+          setIsRealAnalysis(true);
           setCurrentRoute('analysis');
           return;
         }
@@ -77,6 +78,7 @@ export const ScanMedicineView: React.FC = () => {
     // Fallback if camera not working
     const currentPhoto = sampleMockPhotos.find(p => p.title === activeAngle)?.src || sampleMockPhotos[0].src;
     addCapturedPhoto(currentPhoto);
+    setIsRealAnalysis(true);
     setCurrentRoute('analysis');
   };
 
@@ -87,6 +89,7 @@ export const ScanMedicineView: React.FC = () => {
       reader.onload = (event) => {
         if (event.target?.result) {
           addCapturedPhoto(event.target.result as string);
+          setIsRealAnalysis(true);
           setCurrentRoute('analysis');
         }
       };
